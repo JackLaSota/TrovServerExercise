@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tests</title>
+    <script src="https://code.jquery.com/jquery.min.js"></script>
+    <script>
+        testStates = {
+            passed: {
+                name: "Passed",
+                color: "green"
+            },
+            failed: {
+                name: "Failed",
+                color: "red"
+            },
+            running: {
+                name: "Running",
+                color: "gray"
+            }
+        };
+        function updateTestResults (testName, testState, detail) {
+            var tableBody = $('#results').children('tbody');
+            var row = tableBody.children("#" + testName);
+            if (row.length == 0)
+                row = $('<tr>').attr('id', testName).append($('<td>').text(testName), $('<td>')).appendTo(tableBody);
+            var message = testState.name + (detail ? ": " + detail : "");
+            row.children('td').eq(1).text(message);
+            row.css('background-color', testState.color);
+        }
+        function testGetCall (testName, url, makeAssertions) {
+            updateTestResults(testName, testStates.running);
+            $.getJSON(url).done(function (data) {
+                try {
+                    makeAssertions(data);
+                    updateTestResults(testName, testStates.passed);
+                }
+                catch (error) {updateTestResults(testName, testStates.failed, error.message);}
+            }).fail(function (error) {
+                updateTestResults(testName, testStates.failed, "request to server failed.");
+            });
+        }
+        $(document).ready(function () {
+            var serviceUrl = 'https://localhost:44300/GildedRoseService.svc';
+            testGetCall('GetItemsForSaleTest', serviceUrl + '/GetItemsForSale', function (data) {
+            });
+        });
+    </script>
+</head>
+<body>
+<table id="results"><tbody></tbody></table>
+</body>
+</html>
