@@ -7,7 +7,7 @@ namespace TrovServerExercise.Model {
 		string name = "Thneed";
 		[DataMember, NotNull] public string Description {get {return description;} set {description = value;}}
 		string description = "Everyone needs one.";
-		[DataMember] public int Price {get {return price;} set {price = value;}}
-		int price = 10;//Invariant: positive.
+		[DataMember] public uint Price {get {return price;} set {price = value;}}
+		uint price = 10;//Invariant: positive.
 	}
 }

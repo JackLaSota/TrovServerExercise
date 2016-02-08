@@ -7,6 +7,7 @@ namespace TrovServerExercise.Model {
 			[Theory] public static void Invariants (Customer customer) {
 				Assert.NotNull(customer.name);
 				Assert.NotNull(customer.username);
+				Assert.NotNull(customer.password);
 			}
 		}
 	}
