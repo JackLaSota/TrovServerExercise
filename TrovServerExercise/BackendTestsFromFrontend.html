@@ -39,9 +39,18 @@
                 updateTestResults(testName, testStates.failed, "request to server failed.");
             });
         }
+        function assertThat (boolean) {if (!boolean) throw Error();}
+        function assertDefined (hopefullyDefined) {if (hopefullyDefined === undefined) throw Error();}
+        function forEachIn (array, procedure) {for (var i in array) {procedure(array[i]);}}
         $(document).ready(function () {
             var serviceUrl = 'https://localhost:44300/GildedRoseService.svc';
             testGetCall('GetItemsForSaleTest', serviceUrl + '/GetItemsForSale', function (data) {
+                assertThat(data instanceof Array);
+                forEachIn(data, function (item) {
+                    assertDefined(item['Name']);
+                    assertDefined(item['Description']);
+                    assertDefined(item['Price']);
+                });
             });
         });
     </script>
