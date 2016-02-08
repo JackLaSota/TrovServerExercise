@@ -48,6 +48,7 @@
       <HintPath>packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -75,6 +76,10 @@
       <DependentUpon>GildedRoseService.svc</DependentUpon>
     </Compile>
     <Compile Include="IGildedRoseService.cs" />
+    <Compile Include="Model\Customer.cs" />
+    <Compile Include="Model\Customer.Tests.cs" />
+    <Compile Include="Model\CustomerRegistry.cs" />
+    <Compile Include="Model\CustomerRegistry.Tests.cs" />
     <Compile Include="Model\GildedRose.cs" />
     <Compile Include="Model\GildedRose.Tests.cs" />
     <Compile Include="Model\Inventory.cs" />
