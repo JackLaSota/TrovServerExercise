@@ -75,6 +75,7 @@
     <Compile Include="Exceptions.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Extensions.Tests.cs" />
+    <Compile Include="FaultDetail.cs" />
     <Compile Include="GildedRoseService.svc.cs">
       <DependentUpon>GildedRoseService.svc</DependentUpon>
     </Compile>
@@ -94,8 +95,8 @@
     <Compile Include="Model\Item.cs" />
     <Compile Include="Model\Item.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PurchaseAttemptResult.cs" />
-    <Compile Include="PurchaseAttemptResult.Tests.cs" />
+    <Compile Include="Model\Receipt.cs" />
+    <Compile Include="Model\Receipt.Tests.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -1,5 +1,6 @@
-using System;
 using System.Linq;
+using System.ServiceModel;
+using NUnit.Framework;
 using TrovServerExercise.Model;
 
 namespace TrovServerExercise {
@@ -17,16 +18,30 @@ namespace TrovServerExercise {
 			new GildedRose();
 #endif
 		public Item[] GetItemsForSale () {return model.ItemsForSale.ToArray();}
-		public PurchaseAttemptResult ProcessPurchaseAttempt (string username, string password, Item toPurchase) {
-			throw new NotImplementedException();
-			username = username.Normalize();
-			password = password.Normalize();
-			toPurchase = toPurchase.WithNormalizedStrings();
-			try {}
-			catch {
-				
-			}
-			//if (!Item.Tests.Invariants(toPurchase)) return new PurchaseAttemptResult.Failure("Invalid item.");
+		public Receipt ProcessPurchaseAttempt (string username, string password, Item clientDescriptionOfItem) {
+			return Global.GetWrappingExceptionsForClient(() => {
+				Global.DoWrappingExceptions<GildedRoseClientComplaintException>(() => {
+					username = username.NullHandlingNormalize();
+					password = password.NullHandlingNormalize();
+					clientDescriptionOfItem = clientDescriptionOfItem.WithNormalizedStrings();
+					Assert.NotNull(username);
+					Assert.NotNull(password);
+					clientDescriptionOfItem.AssertNotNullAndInvariantsIfAny();
+				}, "Invalid data.");
+				lock (model) {//todo find a way to not do this.
+					var customer = model.CustomerWithUsername(username);
+					if (customer == null) RespondWithFault("Username not found.", true);
+					// ReSharper disable once PossibleNullReferenceException
+					if (!customer.PasswordIs(password)) RespondWithFault("Wrong password.", true);
+					var actualItem = model.ItemMatching(clientDescriptionOfItem);
+					if (actualItem == null) RespondWithFault("Item not carried.", true);
+					if (!customer.CanAfford(actualItem)) RespondWithFault("Insufficient money.", true);
+					return model.ConductSale(customer, actualItem);
+				}
+			});
+		}
+		public static void RespondWithFault (string messageToClient, bool messageShouldBeLayUserVisible) {
+			throw new FaultException<FaultDetail>(new FaultDetail(messageToClient, messageShouldBeLayUserVisible));
 		}
 	}
 }

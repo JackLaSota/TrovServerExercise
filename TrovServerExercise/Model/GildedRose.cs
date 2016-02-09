@@ -21,5 +21,15 @@ namespace TrovServerExercise.Model {
 			Assert.NotNull(customerRegistry);
 			CustomerRegistry.Tests.Invariants(customerRegistry);
 		}
+		public Customer CustomerWithUsername (string username) {
+			return customerRegistry.CustomerWithUsername(username);
+		}
+		public Item ItemMatching (Item description) {return inventory.ItemMatching(description);}
+		public Receipt ConductSale (Customer customer, Item item) {
+			customer.MoneyInWallet -= item.Price;
+			MoneyInRegister += item.Price;
+			inventory.Remove(item);
+			return new Receipt(customer, item);
+		}
 	}
 }

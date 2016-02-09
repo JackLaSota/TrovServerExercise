@@ -8,8 +8,9 @@ namespace TrovServerExercise {
 	}
 	///<summary>To be derived from by and only by types which represent a final failure or refusal of bugless code in Dystheism to do what the user wants.</summary>>
 	///<remarks>"Message" members of this class can be displayed to the end-user.</remarks>
-	public abstract class GildedRoseComplaintException : Exception {
-		protected GildedRoseComplaintException (string messageToUser, Exception innerException) : base(messageToUser, innerException) {}
-		protected GildedRoseComplaintException (string messageToUser) : base(messageToUser) { }
+	public abstract class GildedRoseClientComplaintException : GildedRoseException {
+		protected GildedRoseClientComplaintException (string messageToUser, Exception innerException) : base(messageToUser, innerException) {}
+		protected GildedRoseClientComplaintException (string messageToUser) : base(messageToUser) {}
+		public bool shouldBeLayUserVisible;
 	}
 }

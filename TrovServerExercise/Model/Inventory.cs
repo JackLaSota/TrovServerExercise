@@ -16,5 +16,7 @@ namespace TrovServerExercise.Model {
 			CollectionAssert.AllItemsAreNotNull(items);
 			items.ForEach(Item.Tests.Invariants);
 		}
+		public Item ItemMatching (Item description) {return items.FirstOrDefault(i => i.InterchangeableWith(description));}
+		public void Remove (Item item) {items.Remove(item);}
 	}
 }

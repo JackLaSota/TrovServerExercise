@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using NUnit.Framework;
 
@@ -15,5 +16,6 @@ namespace TrovServerExercise.Model {
 			CollectionAssert.AllItemsAreNotNull(customers);
 			customers.ForEach(Customer.Tests.Invariants);
 		}
+		public Customer CustomerWithUsername (string username) {return customers.FirstOrDefault(c => c.username == username);}
 	}
 }

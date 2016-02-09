@@ -22,5 +22,6 @@ namespace TrovServerExercise.Model {
 			Assert.NotNull(username);
 			Assert.NotNull(password);
 		}
+		//todo maybe keep store of past receipts.
 	}
 }
