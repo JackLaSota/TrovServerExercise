@@ -8,10 +8,7 @@ namespace TrovServerExercise.Model {
 			[Theory] public static void Invariants (GildedRose gildedRose) {
 				Assume.That(gildedRose != null);
 				// ReSharper disable once PossibleNullReferenceException
-				Assert.NotNull(gildedRose.inventory);
-				Inventory.Tests.Invariants(gildedRose.inventory);
-				Assert.NotNull(gildedRose.customerRegistry);
-				CustomerRegistry.Tests.Invariants(gildedRose.customerRegistry);
+				gildedRose.AssertInvariants();
 			}
 		}
 	}

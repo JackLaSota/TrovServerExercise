@@ -82,6 +82,7 @@
     <Compile Include="Global.Tests.cs" />
     <Compile Include="GuaranteesForReflection.cs" />
     <Compile Include="IGildedRoseService.cs" />
+    <Compile Include="IValidated.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\Customer.Tests.cs" />
     <Compile Include="Model\CustomerRegistry.cs" />
@@ -92,8 +93,6 @@
     <Compile Include="Model\Inventory.Tests.cs" />
     <Compile Include="Model\Item.cs" />
     <Compile Include="Model\Item.Tests.cs" />
-    <Compile Include="Model\Session.cs" />
-    <Compile Include="Model\Session.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PurchaseAttemptResult.cs" />
     <Compile Include="PurchaseAttemptResult.Tests.cs" />

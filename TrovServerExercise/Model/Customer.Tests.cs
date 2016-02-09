@@ -6,13 +6,12 @@ namespace TrovServerExercise.Model {
 			[Datapoint] Customer example = MakeExample();
 			[Theory] public static void Invariants (Customer customer) {
 				Assume.That(customer != null);
-				Assert.That(customer.StringsAreNormalized);
 				// ReSharper disable once PossibleNullReferenceException
+				customer.AssertInvariants();
+				Assert.That(customer.StringsAreNormalized);
 				Assert.NotNull(customer.name);
 				Assert.NotNull(customer.username);
-				Assert.NotNull(customer.password);/*
-				if (customer.currentSession != null)
-					Session.Tests.Invariants(customer.currentSession);*/
+				Assert.NotNull(customer.password);
 			}
 		}
 	}

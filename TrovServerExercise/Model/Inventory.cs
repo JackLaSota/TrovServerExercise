@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 
 namespace TrovServerExercise.Model {
-	public partial class Inventory {
+	public partial class Inventory : IValidated {
 		public readonly List<Item> items = new List<Item>();//Invariant: contents not null.
 		public static Inventory MakeExample () {
 			var inventory = new Inventory();
@@ -11,5 +12,9 @@ namespace TrovServerExercise.Model {
 			return inventory;
 		}
 		public int StockOfItemsNamed (string name) {return items.Count(i => i.Name == name);}
+		public void AssertInvariants () {
+			CollectionAssert.AllItemsAreNotNull(items);
+			items.ForEach(Item.Tests.Invariants);
+		}
 	}
 }

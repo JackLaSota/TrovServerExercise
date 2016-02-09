@@ -8,8 +8,7 @@ namespace TrovServerExercise.Model {
 			[Theory] public static void Invariants (Inventory inventory) {
 				Assume.That(inventory != null);
 				// ReSharper disable once PossibleNullReferenceException
-				CollectionAssert.AllItemsAreNotNull(inventory.items);
-				inventory.items.ForEach(Item.Tests.Invariants);
+				inventory.AssertInvariants();
 			}
 			[Test] public void StockTest () {
 				var inventory = new Inventory();

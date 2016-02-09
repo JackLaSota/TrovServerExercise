@@ -6,9 +6,6 @@ using JetBrains.Annotations;
 
 namespace TrovServerExercise {
 	public static partial class Extensions {
-		public static IEnumerable<FieldInfo> FieldsOfType<T> (this Type type, BindingFlags bindingAttr) {
-			return type.GetFields(bindingAttr).Where(field => field.FieldType == typeof(T));
-		}
 		public static IEnumerable<FieldInfo> AllInstanceFieldsOfType <T> (this Type type) {
 			return type.GetFields(bindingFlagsForAllInstanceFields).Where(field => field.FieldType == typeof(T));
 		}
@@ -52,6 +49,10 @@ namespace TrovServerExercise {
 		public static bool NullHandlingEquals ([CanBeNull] this object o, [CanBeNull] object other) {
 			if (o == null || other == null) return o == other;
 			return o.Equals(other);
+		}
+		public static void AssertInvariantsIfAny (this object o) {
+			var validated = o as IValidated; if (validated != null)
+				validated.AssertInvariants();
 		}
 	}
 }
