@@ -6,6 +6,8 @@ namespace TrovServerExercise.Model {
 			[Datapoint] public GildedRose defaultGildedRose = new GildedRose();
 			[Datapoint] public GildedRose example = new GildedRose();
 			[Theory] public static void Invariants (GildedRose gildedRose) {
+				Assume.That(gildedRose != null);
+				// ReSharper disable once PossibleNullReferenceException
 				Assert.NotNull(gildedRose.inventory);
 				Inventory.Tests.Invariants(gildedRose.inventory);
 				Assert.NotNull(gildedRose.customerRegistry);

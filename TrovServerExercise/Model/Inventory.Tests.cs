@@ -6,6 +6,8 @@ namespace TrovServerExercise.Model {
 			[Datapoint] Inventory defaultInventory = new Inventory();
 			[Datapoint] Inventory example = MakeExample();
 			[Theory] public static void Invariants (Inventory inventory) {
+				Assume.That(inventory != null);
+				// ReSharper disable once PossibleNullReferenceException
 				CollectionAssert.AllItemsAreNotNull(inventory.items);
 				inventory.items.ForEach(Item.Tests.Invariants);
 			}
