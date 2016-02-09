@@ -30,12 +30,11 @@ namespace TrovServerExercise {
 		public static S GetWrappingExceptionsForClient <S> (Func<S> toTry) {
 			S toReturn;
 			try {toReturn = toTry();}
+			catch (FaultException) {throw;}
 			catch (GildedRoseClientComplaintException exception) {
 				throw new FaultException<FaultDetail>(new FaultDetail(exception.Message, exception.shouldBeLayUserVisible));
 			}
-			catch {
-				throw new FaultException<FaultDetail>(new FaultDetail());
-			}
+			catch {throw new FaultException<FaultDetail>(new FaultDetail());}
 			return toReturn;
 		}
 	}
