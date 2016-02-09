@@ -27,9 +27,20 @@
             row.children('td').eq(1).text(message);
             row.css('background-color', testState.color);
         }
-        function testGetCall (testName, url, makeAssertions) {
+        function testGetCall (testName, url, makeAssertions, data/*optional.*/) {
+            testServerCall(testName, url, "GET", makeAssertions, data);
+        }
+        function testPostCall (testName, url, makeAssertions, data) {
+            testServerCall(testName, url, "POST", makeAssertions, data);
+        }
+        function testServerCall (testName, url, httpMethod, makeAssertions, data/*optional.*/) {
             updateTestResults(testName, testStates.running);
-            $.getJSON(url).done(function (data) {
+            $.ajax({
+                dataType: "json",
+                type: httpMethod,
+                url: url,
+                data: data
+            }).done(function (data) {
                 try {
                     makeAssertions(data);
                     updateTestResults(testName, testStates.passed);
