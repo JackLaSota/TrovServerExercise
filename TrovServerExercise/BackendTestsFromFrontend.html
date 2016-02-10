@@ -53,15 +53,15 @@
         }
         function testServerCall (testName, url, httpMethod, makeAssertions, data/*optional.*/) {
             updateTestResults(testName, testStates.running);
-            var options = {
+            var ajaxOptions = {
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 type: httpMethod,
                 url: url,
                 processData: true
             };
-            if (data !== undefined) options.data = JSON.stringify(data);
-            $.ajax(options).done(function (data) {
+            if (data !== undefined) ajaxOptions.data = JSON.stringify(data);
+            $.ajax(ajaxOptions).done(function (data) {
                 try {
                     makeAssertions(data);
                     updateTestResults(testName, testStates.passed);
@@ -71,14 +71,24 @@
                 updateTestResults(testName, testStates.failed, "request to server failed.");
             });
         }
+        var serviceUrl = 'https://localhost:44300/GildedRoseService.svc';
+        function resetServerThen (callback) {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: "POST",
+                url: serviceUrl + '/ResetForTests',
+                processData: true,
+                data: {}
+            }).done(function () {callback();}).fail(function () {alert("Failed to reset server.")});
+        }
         function assertNull (o) {if (o !== null) throw Error();}
         function assertNotNull (o) {if (o === null) throw Error();}
         function assertThat (boolean) {if (!boolean) throw Error();}
         function assertEqual (a, b) {if (a != b) throw Error();}
         function assertDefined (hopefullyDefined) {if (hopefullyDefined === undefined) throw Error();}
         function forEachIn (array, procedure) {for (var i in array) {procedure(array[i]);}}
-        $(document).ready(function () {
-            var serviceUrl = 'https://localhost:44300/GildedRoseService.svc';
+        $(document).ready(function () {resetServerThen(function () {
             testGetCall('GetItemsForSale Test', serviceUrl + '/GetItemsForSale', function (data) {
                 assertThat(data instanceof Array);
                 forEachIn(data, function (item) {
@@ -89,8 +99,8 @@
             });
             var batDescription = {"Description": "A sturdy wooden bat.", "Name": "Bat", "Price": 105};//todo repeated from C# code.
             var processPurchaseUrl = serviceUrl + '/ProcessPurchaseAttempt';
-            //Legit purchase test.
-            testPostCall('ProcessPurchaseAttempt Test', processPurchaseUrl, function (data) {
+            //todo consider resetting server between each call to tests to deal with those that have side effects like this, or with unexpected side effects of other tests.
+            testPostCall('Legitimate Purchase Test', processPurchaseUrl, function (data) {
                 var receipt = data.result;
                 assertEqual(receipt.CustomerName, "Sauron");
                 assertEqual(receipt.ItemName, batDescription.Name);
@@ -136,7 +146,7 @@
                 password: "password123",
                 clientDescriptionOfItem: monaLisaDescription
             });
-        });
+        })});
     </script>
 </head>
 <body>

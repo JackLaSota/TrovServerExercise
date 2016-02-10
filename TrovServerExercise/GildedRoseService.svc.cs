@@ -39,6 +39,9 @@ namespace TrovServerExercise {
 				}
 			});
 		}
+#if DEBUG
+		public void ResetForTests () {lock (model) {model = GildedRose.MakeExample();}}
+#endif
 		public static void RespondWithFailure (string messageToClient, bool messageShouldBeLayUserVisible) {
 			throw new GildedRoseClientComplaintException(messageToClient) {shouldBeLayUserVisible = messageShouldBeLayUserVisible};
 		}
