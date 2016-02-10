@@ -33,5 +33,14 @@ namespace TrovServerExercise.Model {
 			inventory.Remove(item);
 			return new Receipt(customer, item);
 		}
+		public Customer AuthenticateOrThrow (string username, string password) {
+			return customerRegistry.AuthenticateOrThrow(username, password);
+		}
+		public Receipt ConductSaleOrThrow (Customer customer, Item clientDescriptionOfItem) {
+			var actualItem = ItemMatching(clientDescriptionOfItem);
+			if (actualItem == null) Global.ThrowComplaint("Item not carried.", true);
+			if (!customer.CanAfford(actualItem)) Global.ThrowComplaint("Insufficient money.", true);
+			return ConductSale(customer, actualItem);
+		}
 	}
 }

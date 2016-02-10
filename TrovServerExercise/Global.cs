@@ -27,5 +27,8 @@ namespace TrovServerExercise {
 			catch {throw new FaultException<FaultDetail>(new FaultDetail());}
 			return toReturn;
 		}
+		public static void ThrowComplaint (string messageToClient, bool messageShouldBeLayUserVisible) {
+			throw new GildedRoseClientComplaintException(messageToClient) { shouldBeLayUserVisible = messageShouldBeLayUserVisible };
+		}
 	}
 }

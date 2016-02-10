@@ -28,22 +28,13 @@ namespace TrovServerExercise {
 					clientDescriptionOfItem.AssertNotNullAndInvariantsIfAny();
 				}, "Invalid data.");
 				lock (model) {//todo find a way to not do this.
-					var customer = model.CustomerWithUsername(username);
-					if (customer == null) RespondWithFailure("Username not found.", true);
-					// ReSharper disable once PossibleNullReferenceException
-					if (!customer.PasswordIs(password)) RespondWithFailure("Wrong password.", true);
-					var actualItem = model.ItemMatching(clientDescriptionOfItem);
-					if (actualItem == null) RespondWithFailure("Item not carried.", true);
-					if (!customer.CanAfford(actualItem)) RespondWithFailure("Insufficient money.", true);
-					return model.ConductSale(customer, actualItem);
+					var customer = model.AuthenticateOrThrow(username, password);
+					return model.ConductSaleOrThrow(customer, clientDescriptionOfItem);
 				}
 			});
 		}
 #if DEBUG
 		public void ResetForTests () {lock (model) {model = GildedRose.MakeExample();}}
 #endif
-		public static void RespondWithFailure (string messageToClient, bool messageShouldBeLayUserVisible) {
-			throw new GildedRoseClientComplaintException(messageToClient) {shouldBeLayUserVisible = messageShouldBeLayUserVisible};
-		}
 	}
 }

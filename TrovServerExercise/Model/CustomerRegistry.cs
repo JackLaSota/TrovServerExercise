@@ -17,5 +17,12 @@ namespace TrovServerExercise.Model {
 			customers.ForEach(Customer.Tests.Invariants);
 		}
 		public Customer CustomerWithUsername (string username) {return customers.FirstOrDefault(c => c.username == username);}
+		public Customer AuthenticateOrThrow (string username, string password) {
+			var customer = CustomerWithUsername(username);
+			if (customer == null) Global.ThrowComplaint("Username not found.", true);
+			// ReSharper disable once PossibleNullReferenceException
+			if (!customer.PasswordIs(password)) Global.ThrowComplaint("Wrong password.", true);
+			return customer;
+		}
 	}
 }
