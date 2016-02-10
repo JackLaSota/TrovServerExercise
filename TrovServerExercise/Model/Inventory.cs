@@ -9,6 +9,7 @@ namespace TrovServerExercise.Model {
 			var inventory = new Inventory();
 			inventory.items.Add(new Item {Name = "Bat", Description = "A sturdy wooden bat.", Price = 105});
 			inventory.items.Add(new Item {Name = "Ball", Description = "A white ball bound in red thread. Costs 100 less than the bat and in total they cost 110. How much does it cost?", Price = 5});
+			inventory.items.Add(new Item {Name = "Mona Lisa", Description = "Some people think it's pretty or something?", Price = 787000000/*If we're pretending "1" == 1 cent, this is actually 100x too cheap, but 32-bit ints.*/});
 			return inventory;
 		}
 		public int StockOfItemsNamed (string name) {return items.Count(i => i.Name == name);}

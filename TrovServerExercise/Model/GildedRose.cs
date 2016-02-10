@@ -12,6 +12,7 @@ namespace TrovServerExercise.Model {
 		public static GildedRose MakeExample () {
 			return new GildedRose {
 				inventory = Inventory.MakeExample(),
+				customerRegistry = CustomerRegistry.MakeExample(),
 				MoneyInRegister = 1000
 			};
 		}
@@ -25,6 +26,7 @@ namespace TrovServerExercise.Model {
 			return customerRegistry.CustomerWithUsername(username);
 		}
 		public Item ItemMatching (Item description) {return inventory.ItemMatching(description);}
+		///<summary>Precondition: sale is valid.</summary>
 		public Receipt ConductSale (Customer customer, Item item) {
 			customer.MoneyInWallet -= item.Price;
 			MoneyInRegister += item.Price;

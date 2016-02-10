@@ -18,11 +18,13 @@
                 color: "gray"
             }
         };
+        var testRows = {};
         function updateTestResults (testName, testState, detail) {
             var tableBody = $('#results').children('tbody');
-            var row = tableBody.children("#" + testName);
-            if (row.length == 0)
-                row = $('<tr>').attr('id', testName).append($('<td>').text(testName), $('<td>')).appendTo(tableBody);
+            var row = testRows[testName]//tableBody.children("#" + testName);
+            if (row === undefined)
+                row = $('<tr>').append($('<td>').text(testName), $('<td>')).appendTo(tableBody);
+            testRows[testName] = row;
             var message = testState.name + (detail ? ": " + detail : "");
             row.children('td').eq(1).text(message);
             row.css('background-color', testState.color);
@@ -31,16 +33,35 @@
             testServerCall(testName, url, "GET", makeAssertions, data);
         }
         function testPostCall (testName, url, makeAssertions, data) {
-            testServerCall(testName, url, "POST", makeAssertions, data);
+            testServerCall(testName, url, "POST",
+                function (sillilyWrappedData) {
+                    for (var i in sillilyWrappedData)//should only happen once, but this gets at it regardless of name
+                        makeAssertions(sillilyWrappedData[i]);
+                }, data);
+        }
+        function testPostCallForFailure (testName, url, makeAssertions, data) {
+            testPostCall(testName, url, function (attempt) {
+                assertNotNull(!attempt.ErrorMessage);
+                makeAssertions(attempt);
+            }, data);
+        }
+        function testPostCallForErrorMessage (testName, url, message, data) {
+            testPostCallForFailure(testName, url,
+                function (failure) {
+                    assertEqual(failure.ErrorMessage, message);
+                }, data)
         }
         function testServerCall (testName, url, httpMethod, makeAssertions, data/*optional.*/) {
             updateTestResults(testName, testStates.running);
-            $.ajax({
+            var options = {
+                contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 type: httpMethod,
                 url: url,
-                data: data
-            }).done(function (data) {
+                processData: true
+            };
+            if (data !== undefined) options.data = JSON.stringify(data);
+            $.ajax(options).done(function (data) {
                 try {
                     makeAssertions(data);
                     updateTestResults(testName, testStates.passed);
@@ -50,18 +71,70 @@
                 updateTestResults(testName, testStates.failed, "request to server failed.");
             });
         }
+        function assertNull (o) {if (o !== null) throw Error();}
+        function assertNotNull (o) {if (o === null) throw Error();}
         function assertThat (boolean) {if (!boolean) throw Error();}
+        function assertEqual (a, b) {if (a != b) throw Error();}
         function assertDefined (hopefullyDefined) {if (hopefullyDefined === undefined) throw Error();}
         function forEachIn (array, procedure) {for (var i in array) {procedure(array[i]);}}
         $(document).ready(function () {
             var serviceUrl = 'https://localhost:44300/GildedRoseService.svc';
-            testGetCall('GetItemsForSaleTest', serviceUrl + '/GetItemsForSale', function (data) {
+            testGetCall('GetItemsForSale Test', serviceUrl + '/GetItemsForSale', function (data) {
                 assertThat(data instanceof Array);
                 forEachIn(data, function (item) {
                     assertDefined(item['Name']);
                     assertDefined(item['Description']);
                     assertDefined(item['Price']);
                 });
+            });
+            var batDescription = {"Description": "A sturdy wooden bat.", "Name": "Bat", "Price": 105};//todo repeated from C# code.
+            var processPurchaseUrl = serviceUrl + '/ProcessPurchaseAttempt';
+            //Legit purchase test.
+            testPostCall('ProcessPurchaseAttempt Test', processPurchaseUrl, function (data) {
+                var receipt = data.result;
+                assertEqual(receipt.CustomerName, "Sauron");
+                assertEqual(receipt.ItemName, batDescription.Name);
+                assertEqual(receipt.Price, batDescription.Price);
+            }, {
+                username: "RulezThemAll973",//todo tons of repetition from C# code.
+                password: "password123",
+                clientDescriptionOfItem: batDescription
+            });
+            function testProcessPurchaseForErrorMessage (testName, message, data) {
+                testPostCallForErrorMessage(testName, processPurchaseUrl, message, data)
+            }
+            testProcessPurchaseForErrorMessage("Invalid Data Test 1", "Invalid data.", {
+                username: null,
+                password: "password123",
+                clientDescriptionOfItem: batDescription
+            });
+            testProcessPurchaseForErrorMessage("Invalid Data Test 2", "Invalid data.", {
+                username: "RulezThemAll973",
+                password: "password123",
+                clientDescriptionOfItem: {}
+            });
+            testProcessPurchaseForErrorMessage("Invalid Username Test", "Username not found.", {
+                username: "Gaster",
+                password: "password123",
+                clientDescriptionOfItem: batDescription
+            });
+            testProcessPurchaseForErrorMessage("Wrong Password Test", "Wrong password.", {
+                username: "RulezThemAll973",
+                password: "knock knock",
+                clientDescriptionOfItem: batDescription
+            });
+            testProcessPurchaseForErrorMessage("Item Not Carried Test", "Item not carried.", {
+                username: "RulezThemAll973",
+                password: "password123",
+                clientDescriptionOfItem: {
+                    "Description": "To bring them all and in the darkness bind them.", "Name": "The One Ring", "Price": 1
+                }
+            });
+            var monaLisaDescription = {"Description": "Some people think it's pretty or something?", "Name": "Mona Lisa", "Price": 787000000};
+            testProcessPurchaseForErrorMessage("Insufficient Money Test", "Insufficient money.", {
+                username: "RulezThemAll973",
+                password: "password123",
+                clientDescriptionOfItem: monaLisaDescription
             });
         });
     </script>
